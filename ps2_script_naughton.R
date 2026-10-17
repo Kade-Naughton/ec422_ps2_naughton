@@ -106,3 +106,22 @@ ggplot(unemp_summary, aes(x = fct_reorder(region, mean_rate), y = mean_rate)) +
        y = "Mean Unemployment Rate (%)") +
   theme_minimal()
 
+# Oregon unemployment relative to US
+# Chose because plots in previous questions make it hard to tell if Oregon
+# is going better or worse compared to the US. Interest in oregon because 
+# I've lived here my whole life and plan to stick around so I care for the 
+# state.
+oregon_gap <- unemp |>
+  select(date, region, unemployment_rate) |>
+  pivot_wider(names_from = region, values_from = unemployment_rate) |>
+  mutate(oregon_minus_us = Oregon - `United States`)
+
+ggplot(oregon_gap, aes(x = date, y = oregon_minus_us)) +
+  geom_line() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(title = "Oregon Unemployment Rate Relative to the U.S.",
+       x = "Date",
+       y = "Oregon minus U.S. (percentage points)") +
+  theme_minimal()
+
+
