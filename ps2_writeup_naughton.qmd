@@ -1,0 +1,113 @@
+---
+title: "Problem Set 2"
+author: "Kade Naughton"
+date: 10/16/2026
+format:
+  html:
+    toc: true
+    embed-resources: true
+---
+
+**GitHub repo:** <https://github.com/Kade-Naughton/ec422_ps2_naughton>
+
+```{r}
+#| include: false
+library(tidyverse)
+library(knitr)
+```
+
+## Data
+
+The data are monthly, seasonally adjusted unemployment rates for the United States, Oregon, California, Texas, and New York. They run from January 1976 to the most recent month published.
+
+```{r}
+#| echo: false
+unemp_raw <- read_rds("data/unemp_raw.rds")
+head(unemp_raw)
+```
+
+## Wrangling
+
+The tables below summarize the unemployment rate by region and show the largest month-over-month changes. Rates are in percent and changes are in percentage points.
+
+```{r}
+#| include: false
+source("ps2_script_naughton.R")
+```
+
+```{r}
+#| echo: false
+kable(unemp_summary, digits = 2,
+      caption = "Mean, minimum, and maximum unemployment rate by region, full sample.")
+```
+
+```{r}
+#| echo: false
+kable(unemp_recent_summary, digits = 2,
+      caption = "Mean, minimum, and maximum unemployment rate by region, January 2015 onward.")
+```
+
+```{r}
+#| echo: false
+kable(unemp_top_increases_no_covid, digits = 2,
+      caption = "Five largest month-over-month increases (plus ties), excluding 2020.")
+```
+
+```{r}
+#| echo: false
+kable(unemp_top_decreases_no_covid, digits = 2,
+      caption = "Five largest month-over-month decreases (plus ties), excluding 2020.")
+```
+
+## Visualization
+
+**Figure 1:** Unemployment rate over time, all regions on one plot.
+
+```{r}
+#| echo: false
+ggplot(unemp, aes(x = date, y = unemployment_rate, color = region)) +
+  geom_line() +
+  labs(title = "Monthly Unemployment Rate by Region",
+       x = "Date", y = "Unemployment Rate (%)", color = "Region") +
+  theme_minimal()
+```
+
+**Figure 2:** The same series, with a separate panel for each region.
+
+```{r}
+#| echo: false
+ggplot(unemp, aes(x = date, y = unemployment_rate, color = region)) +
+  geom_line() +
+  facet_wrap(~ region) +
+  labs(title = "Monthly Unemployment Rate by Region",
+       x = "Date", y = "Unemployment Rate (%)") +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+**Figure 3:** Mean unemployment rate by region over the full sample, lowest to highest.
+
+```{r}
+#| echo: false
+ggplot(unemp_summary, aes(x = fct_reorder(region, mean_rate), y = mean_rate)) +
+  geom_col() +
+  labs(title = "Average Unemployment Rate by Region, 1976 to Present",
+       x = "Region", y = "Mean Unemployment Rate (%)") +
+  theme_minimal()
+```
+
+**Figure 4:** This plot shows Oregon's unemployment rate minus the U.S. rate over time. I chose it because the earlier plots make it hard to tell whether Oregon is doing better or worse than the U.S., and I care about the state because I've lived here my whole life and plan to stay.
+
+```{r}
+#| echo: false
+ggplot(oregon_gap, aes(x = date, y = oregon_minus_us)) +
+  geom_line() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(title = "Oregon Unemployment Rate Relative to the U.S.",
+       x = "Date", y = "Oregon minus U.S. (percentage points)") +
+  theme_minimal()
+```
+
+## Reflection
+
+Reading in and wrangling the data was straightforward once I understood how the pipe chains steps together. The grouped `lag()` calculation took some thought because the data had to be sorted and grouped by region first. Git tripped me up at first as I sometimes would push commits with incorrect names, or I would miss a flag (-m), but after the first few, I now understand how git is meant to be used for the purposes of this course. I now feel more comfortable committing in small steps and pushing to GitHub. Quarto was not intuitive as I wanted to learn the source code instead of visual editing - luckily it was somewhat similiar to Discord formatting which I have grown familiar with. I used AI to help with code on parts of this assignment, as the course allows and requires, afterwards going back over what went wrong, why my code wasn't working, what the AI-recommended code was doing, and how the overall code architecture worked together to make a cohesive outcome.
