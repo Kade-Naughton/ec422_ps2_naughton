@@ -78,3 +78,13 @@ unemp_top_increases_no_covid <- unemp_no_covid |>
 unemp_top_decreases_no_covid <- unemp_no_covid |>
   slice_min(unemployment_rate_change, n = 5, with_ties = TRUE) |>
   select(region, date, unemployment_rate, unemployment_rate_change)
+
+# Unemployment/time plot
+ggplot(unemp, aes(x = date, y = unemployment_rate, color = region)) +
+  geom_line() +
+  labs(title = "Monthly Unemployment Rate by Region",
+       x = "Date",
+       y = "Unemployment Rate (%)",
+       color = "Region") +
+  theme_minimal()
+
