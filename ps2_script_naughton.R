@@ -57,6 +57,13 @@ unemp_summary <- unemp |>
     min_rate  = min(unemployment_rate,  na.rm = TRUE),
     max_rate  = max(unemployment_rate,  na.rm = TRUE)
   )
+unemp_recent_summary <- unemp_recent |>
+  group_by(region) |>
+  summarize(
+    mean_rate = mean(unemployment_rate, na.rm = TRUE),
+    min_rate  = min(unemployment_rate,  na.rm = TRUE),
+    max_rate  = max(unemployment_rate,  na.rm = TRUE)
+  )
 
 # Find extremes of data
 unemp_top_increases <- unemp |>
@@ -108,7 +115,7 @@ ggplot(unemp_summary, aes(x = fct_reorder(region, mean_rate), y = mean_rate)) +
 
 # Oregon unemployment relative to US
 # Chose because plots in previous questions make it hard to tell if Oregon
-# is going better or worse compared to the US. Interest in oregon because 
+# is going better or worse compared to the US. Interest in Oregon because 
 # I've lived here my whole life and plan to stick around so I care for the 
 # state.
 oregon_gap <- unemp |>
