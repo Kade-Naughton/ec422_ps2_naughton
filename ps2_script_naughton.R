@@ -88,3 +88,13 @@ ggplot(unemp, aes(x = date, y = unemployment_rate, color = region)) +
        color = "Region") +
   theme_minimal()
 
+# Separate plot for each region
+ggplot(unemp, aes(x = date, y = unemployment_rate, color = region)) +
+  geom_line() +
+  facet_wrap(~ region) +
+  labs(title = "Monthly Unemployment Rate by Region",
+       x = "Date",
+       y = "Unemployment Rate (%)") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
