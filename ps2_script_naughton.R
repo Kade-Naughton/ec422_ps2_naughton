@@ -67,7 +67,7 @@ unemp_top_decreases <- unemp |>
   slice_min(unemployment_rate_change, n = 5, with_ties = TRUE) |>
   select(region, date, unemployment_rate, unemployment_rate_change)
 
-# Exclude 2020
+# Exclude 2020 due to abnormalities via Covid
 unemp_no_covid <- unemp |>
   filter(year(date) != 2020)
 
