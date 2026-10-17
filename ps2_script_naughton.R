@@ -26,5 +26,55 @@ unemp <- unemp_raw |>
       symbol == "NYUR" ~ "New York"
     )
   )
-    
-  
+
+
+unemp <- unemp |>
+  arrange(region, date) |>
+  group_by(region) |>
+  mutate(
+    unemployment_rate = replace(
+      unemployment_rate,
+      date == as.Date("2025-10-01"),
+      unemployment_rate[date == as.Date("2025-09-01")]
+    )
+  ) |>
+  ungroup()
+
+# Wrangling data
+unemp <- unemp |>
+      arrange(region, date) |>
+      group_by(region) |>
+      mutate(unemployment_rate_change = unemployment_rate - lag(unemployment_rate)) |>
+      ungroup()    
+
+unemp_recent <- unemp |>
+  filter(date >= as.Date("2015-01-01"))
+
+unemp_summary <- unemp |>
+  group_by(region) |>
+  summarize(
+    mean_rate = mean(unemployment_rate, na.rm = TRUE),
+    min_rate  = min(unemployment_rate,  na.rm = TRUE),
+    max_rate  = max(unemployment_rate,  na.rm = TRUE)
+  )
+
+# Find extremes of data
+unemp_top_increases <- unemp |>
+  slice_max(unemployment_rate_change, n = 5, with_ties = TRUE) |>
+  select(region, date, unemployment_rate, unemployment_rate_change)
+
+unemp_top_decreases <- unemp |>
+  slice_min(unemployment_rate_change, n = 5, with_ties = TRUE) |>
+  select(region, date, unemployment_rate, unemployment_rate_change)
+
+# Exclude 2020
+unemp_no_covid <- unemp |>
+  filter(year(date) != 2020)
+
+unemp_top_increases_no_covid <- unemp_no_covid |>
+  slice_max(unemployment_rate_change, n = 5, with_ties = TRUE) |>
+  select(region, date, unemployment_rate, unemployment_rate_change)
+
+unemp_top_decreases_no_covid <- unemp_no_covid |>
+  slice_min(unemployment_rate_change, n = 5, with_ties = TRUE) |>
+  select(region, date, unemployment_rate, unemployment_rate_change)
