@@ -98,3 +98,11 @@ ggplot(unemp, aes(x = date, y = unemployment_rate, color = region)) +
   theme_minimal() +
   theme(legend.position = "none")
 
+# Mean unemployment by region bar chart, ordered lowest to highest
+ggplot(unemp_summary, aes(x = fct_reorder(region, mean_rate), y = mean_rate)) +
+  geom_col() +
+  labs(title = "Average Unemployment Rate by Region, 1976 to Present",
+       x = "Region",
+       y = "Mean Unemployment Rate (%)") +
+  theme_minimal()
+
